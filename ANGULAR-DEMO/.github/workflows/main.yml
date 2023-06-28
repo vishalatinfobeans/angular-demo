@@ -31,5 +31,5 @@ jobs:
       - name: Push Build to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/practise/*"
+          artifacts: "dist/ANGULAR-DEMO/*"
           token: ${{ secrets.TOKEN }}
