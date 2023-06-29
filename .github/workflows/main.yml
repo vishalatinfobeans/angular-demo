@@ -36,7 +36,7 @@ jobs:
           artifacts: "dist/angular-demo/*"
           token: ${{ secrets.TOKEN }}
 
-# name: GitHub Pages
+## name: GitHub Pages 
 
 # on:
 #   push:
