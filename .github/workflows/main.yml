@@ -35,3 +35,10 @@ jobs:
         with:
           artifacts: "dist/angular-demo/*"
           token: ${{ secrets.TOKEN }}
+      - name: Deploy
+        if: success()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          publish_dir: dist/angular-demo
+          enable_jekyll: true
