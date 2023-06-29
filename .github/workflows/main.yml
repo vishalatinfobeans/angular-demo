@@ -1,44 +1,80 @@
+# on:
+#   push:
+#     tags:
+#       - '*'
+# name: Build Angular
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node-version: [16.13]
+
+#     steps:
+#       - uses: actions/checkout@v1
+#         with:
+#           fetch-depth: 0
+
+#       - name: Cache node modules
+#         uses: actions/cache@v1
+#         with:
+#           path: ~/.npm
+#           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#           restore-keys: |
+#             ${{ runner.os }}-node-
+#       - name: Node ${{ matrix.node-version }}
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - name: npm install and npm run build
+#         run: |
+#           npm i
+#           npm run build:prod
+#       - name: Push Build to Releases
+#         uses: ncipollo/release-action@v1
+#         with:
+#           artifacts: "dist/angular-demo/*"
+#           token: ${{ secrets.TOKEN }}
+#       - name: Deploy
+#         if: success()
+#         uses: peaceiris/actions-gh-pages@v3
+#         with:
+#           github_token: ${{ secrets.TOKEN }}
+#           publish_dir: dist/angular-demo
+#           enable_jekyll: true
+
+name: GitHub Pages
+
 on:
   push:
     tags:
       - '*'
-name: Build Angular
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.13]
-
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 0
+    - name: Checkout
+      uses: actions/checkout@v1
 
-      - name: Cache node modules
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: npm install and npm run build
-        run: |
-          npm i
-          npm run build:prod
-      - name: Push Build to Releases
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "dist/angular-demo/*"
-          token: ${{ secrets.TOKEN }}
-      - name: Deploy
-        if: success()
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.TOKEN }}
-          publish_dir: dist/angular-demo
-          enable_jekyll: true
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm run test:headless
+
+    - name: Build
+      run: npm run build:prod
+
+    - name: Deploy
+      if: success()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: dist/angular-demo
+        enable_jekyll: true
