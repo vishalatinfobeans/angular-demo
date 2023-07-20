@@ -11,6 +11,11 @@ jobs:
         node-version: [16.13]
 
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ github.repository }}
+        run: echo "$GITHUB_CONTEXT"
+        
       - uses: actions/checkout@v1
         with:
           fetch-depth: 0
